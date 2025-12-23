@@ -6,21 +6,17 @@ on:
       - main
 
 jobs:
-  repo-sync:
-    env:
-      dst_token: ${{ secrets.GITEE_TOKEN }}
-      gitee_user: ${{ secrets.GITEE_USER }}
+  git-sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source codes
-        uses: actions/checkout@v2
-
-      - name: Mirror the Github organization repos to Gitee.
-        uses: Yikun/hub-mirror-action@master
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
-          src: github/${{ github.repository_owner }}
-          dst: gitee/${{ secrets.GITEE_USER }}
-          dst_token: ${{ secrets.GITEE_TOKEN }}
-          static_list: '${{ github.event.repository.name }}'
-          force_update: true
-          debug: true
+          fetch-depth: 0
+
+      - name: Push to Gitee
+        run: |
+          remote_repo="https://${{ secrets.GITEE_USER }}:${{ secrets.GITEE_TOKEN }}@gitee.com/${{ secrets.GITEE_USER }}/${{ github.event.repository.name }}.git"
+          git remote add gitee "${remote_repo}"
+          git push --all --force gitee
+          git push --tags --force gitee
