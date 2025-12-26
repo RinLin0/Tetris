@@ -5,7 +5,7 @@ import random
 import math
 import block
 import constants
-# something change
+# something
 
 class Tetris(object):
     """
